@@ -25,7 +25,7 @@ public class UserService {
     }
 
     public void saveUser(Users user){
-        user.setPass(this.passwordEncoder.encode(user.getPass()));
+        user.setPass(this.passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 }
