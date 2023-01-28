@@ -1,11 +1,8 @@
 package com.hoaxify.webservice.config;
 
-import com.hoaxify.webservice.auth.AuthController;
 import com.hoaxify.webservice.user.UserRepository;
-import com.hoaxify.webservice.user.UserService;
 import com.hoaxify.webservice.user.Users;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,6 +19,6 @@ public class UserAuthService implements UserDetailsService {
         Users inDB = userRepository.getUserByUserName(username);
         if(inDB == null)
             throw new UsernameNotFoundException("User Has Not Found");
-        return new HoaxifyUserDetails(inDB);
+        return inDB;
     }
 }
