@@ -1,7 +1,5 @@
 package com.hoaxify.webservice.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.hoaxify.webservice.shared.Views;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -21,11 +19,9 @@ public class Users implements UserDetails {
     private long id;
     @NotNull(message = "{hoaxify.constraint.name.NotNull.message}")
     @Size(min = 5, max = 250)
-    @JsonView(Views.Public.class)
     private String name;
     @NotNull(message = "{hoaxify.constraint.surname.NotNull.message}")
     @Size(min = 5, max = 250)
-    @JsonView(Views.Public.class)
     private String surname;
     @NotNull(message = "{hoaxify.constraint.userName.NotNull.message}")
     @Size(min = 5, max = 250)
@@ -35,7 +31,6 @@ public class Users implements UserDetails {
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$",
              message = "{hoaxify.constraint.pass.pattern.message}")
     private String pass;
-    @JsonView(Views.Public.class)
     private String image;
 
     public String getName() {
@@ -56,6 +51,10 @@ public class Users implements UserDetails {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 
     public String getImage() {

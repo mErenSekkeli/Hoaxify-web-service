@@ -4,12 +4,13 @@ import com.hoaxify.webservice.error.ApiError;
 import com.hoaxify.webservice.shared.GenericResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,5 +49,15 @@ public class UserController {
             return new GenericResponse("User With id is " + id + " Has Not Found!");
         }
         return new GenericResponse("User Has Brought Successfully!");
+    }
+
+    /**
+     * It's so much safer than manuel paging
+     * @param page usage -> page=1&size=5 in the get url parameter
+     * @return Page<Users>
+     */
+    @GetMapping("/api/1.0/usersList")
+    public Page<UserVM> getUsers(Pageable page){
+        return userService.getUsers(page).map(UserVM::new);
     }
 }
