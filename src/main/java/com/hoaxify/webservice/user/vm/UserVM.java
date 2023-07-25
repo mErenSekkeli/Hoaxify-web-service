@@ -1,5 +1,6 @@
-package com.hoaxify.webservice.user;
+package com.hoaxify.webservice.user.vm;
 
+import com.hoaxify.webservice.user.Users;
 import lombok.Data;
 
 @Data

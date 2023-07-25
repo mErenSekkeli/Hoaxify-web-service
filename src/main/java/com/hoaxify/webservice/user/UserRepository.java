@@ -15,5 +15,10 @@ public interface UserRepository extends JpaRepository<Users, Long> {
         value = "SELECT users.* FROM users WHERE user_name = :userName")
     Users getUserByUserName(@Param("userName") String userName);
 
+    Users findByUserName(String userName);
+
+
+    Page<Users> findByUserNameNot(String userName, Pageable pageConf);
+
 
 }
