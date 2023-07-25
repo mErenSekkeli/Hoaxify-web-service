@@ -10,6 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -23,6 +24,7 @@ import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     AuthenticationManager authenticationManager;
@@ -43,6 +45,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST, "/api/1.0/auth").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/1.0/users/{username}").authenticated()
                 .and()
                 .authorizeHttpRequests().anyRequest().permitAll();
 
