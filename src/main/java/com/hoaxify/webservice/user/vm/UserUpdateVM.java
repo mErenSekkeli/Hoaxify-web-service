@@ -8,4 +8,5 @@ public class UserUpdateVM {
     private String name;
     private String surname;
     private String userName;
+    private String image;
 }
