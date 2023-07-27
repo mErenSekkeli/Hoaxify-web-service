@@ -1,24 +1,28 @@
 package com.hoaxify.webservice.user;
 
 import com.hoaxify.webservice.error.NotFoundException;
+import com.hoaxify.webservice.file.FileService;
 import com.hoaxify.webservice.user.vm.UserUpdateVM;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.io.*;
+
 
 @Service
 public class UserService {
 
     UserRepository userRepository;
+    FileService fileService;
     PasswordEncoder passwordEncoder;
     @Autowired//Eğer tek bir tane set edilecek obje varsa autowired'a gerek yok
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, FileService fileService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.fileService = fileService;
     }
 
     public Users getUserById(long id){
@@ -51,6 +55,24 @@ public class UserService {
         Users inDB = getUserByUserName(username);
         inDB.setName(userUpdateVM.getName());
         inDB.setSurname(userUpdateVM.getSurname());
+        if(userUpdateVM.getImage() != null){
+            String oldImageName = inDB.getImage();
+
+            try {
+                String fileName = fileService.writeBase64EncodedStringToFile(userUpdateVM.getImage());
+                inDB.setImage(fileName);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if(oldImageName != null) {
+                try {
+                    fileService.deleteFile(oldImageName);
+                } catch (IOException e) {
+
+                }
+            }
+        }
         return userRepository.save(inDB);
     }
+
 }
