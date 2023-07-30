@@ -49,7 +49,6 @@ public class UserController {
         Users user;
         try{
             user = userService.getUserById(id);
-            System.out.println(user.toString());
         }catch (NullPointerException e){
             return new GenericResponse("User With id is " + id + " Has Not Found!");
         }
@@ -74,7 +73,7 @@ public class UserController {
 
     @PutMapping("/users/{username}")
     @PreAuthorize("#username == #loggedInUser.userName") // Response entity işlemi ile aynı işlemi yapıyor
-    public UserVM updateUser(@PathVariable String username, @RequestBody UserUpdateVM updatedUser, @CurrentUser Users loggedInUser){
+    public UserVM updateUser(@PathVariable String username, @Valid @RequestBody UserUpdateVM updatedUser, @CurrentUser Users loggedInUser){
         Users user = userService.updateUser(username, updatedUser);
         return new UserVM(user);
     }
