@@ -1,5 +1,6 @@
 package com.hoaxify.webservice.file;
 
+import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -8,7 +9,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.UUID;
@@ -23,7 +23,12 @@ public class FileService {
         String fileName = generateRandomName();
         File target = new File(uploadDir + "/" + fileName);
         OutputStream io = new FileOutputStream(target);
+        Tika tika = new Tika();
         byte[] base64encoded = Base64.getDecoder().decode(image);
+        String fileType = tika.detect(base64encoded);
+        if (!fileType.contains("image")) {
+            throw new IOException();
+        }
         io.write(base64encoded);
         io.close();
         return fileName;
@@ -36,5 +41,10 @@ public class FileService {
 
     private String generateRandomName() {
         return UUID.randomUUID().toString().replaceAll("-", "");
+    }
+
+    public String evaluateFileType(String file) {
+        Tika tika = new Tika();
+        return tika.detect(Base64.getDecoder().decode(file));
     }
 }

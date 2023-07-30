@@ -68,7 +68,7 @@ public class UserService {
                 try {
                     fileService.deleteFile(oldImageName);
                 } catch (IOException e) {
-
+                    e.printStackTrace();
                 }
             }
         }
