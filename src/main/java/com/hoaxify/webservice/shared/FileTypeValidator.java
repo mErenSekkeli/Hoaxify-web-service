@@ -10,16 +10,24 @@ public class FileTypeValidator implements ConstraintValidator<FileType, String> 
     @Autowired
     FileService fileService;
 
+    String[] types;
+
+    @Override
+    public void initialize(FileType constraintAnnotation) {
+        this.types = constraintAnnotation.types();
+    }
+
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
         if(s == null || s.isEmpty()){
             return true;
         }
         String fileType = fileService.evaluateFileType(s);
-        if(fileType.equalsIgnoreCase("image/png") || fileType.equalsIgnoreCase("image/jpeg")){
-            return true;
-        }else {
-            return false;
+        for (String supportedType : types) {
+            if(fileType.contains(supportedType)){
+                return true;
+            }
         }
+        return false;
     }
 }

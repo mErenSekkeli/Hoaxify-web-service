@@ -14,6 +14,6 @@ public class UserUpdateVM {
     @Size(min = 4, max = 255)
     private String surname;
     private String userName;
-    @FileType
+    @FileType(types = {"image/png", "image/jpeg"})
     private String image;
 }
