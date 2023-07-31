@@ -23,12 +23,7 @@ public class FileService {
         String fileName = generateRandomName();
         File target = new File(uploadDir + "/" + fileName);
         OutputStream io = new FileOutputStream(target);
-        Tika tika = new Tika();
         byte[] base64encoded = Base64.getDecoder().decode(image);
-        String fileType = tika.detect(base64encoded);
-        if (!fileType.contains("image")) {
-            throw new IOException();
-        }
         io.write(base64encoded);
         io.close();
         return fileName;

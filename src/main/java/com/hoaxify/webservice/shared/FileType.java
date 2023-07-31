@@ -17,6 +17,8 @@ public @interface FileType {
 
     String message() default "{hoaxify.constraint.image.fileType.message}";
 
+    String[] types() default {"image/png", "image/jpeg"};
+
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
