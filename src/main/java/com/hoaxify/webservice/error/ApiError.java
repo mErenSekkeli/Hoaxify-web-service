@@ -1,7 +1,6 @@
 package com.hoaxify.webservice.error;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jdk.jfr.DataAmount;
 
 import java.util.Date;
 import java.util.Map;
