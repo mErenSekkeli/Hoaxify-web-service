@@ -1,12 +1,16 @@
 package com.hoaxify.webservice.hoax;
 
 import com.hoaxify.webservice.error.ApiError;
-import com.hoaxify.webservice.hoax.vm.HoaxUpdateVM;
+import com.hoaxify.webservice.hoax.vm.HoaxVM;
 import com.hoaxify.webservice.shared.CurrentUser;
 import com.hoaxify.webservice.shared.GenericResponse;
 import com.hoaxify.webservice.user.Users;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.FieldError;
@@ -29,7 +33,6 @@ public class HoaxController {
         ApiError error = new ApiError(400, "Validation Error", "/api/1.0/hoaxes");
         Map<String, String> validationErrors = new HashMap<>();
         for(FieldError fieldError : exception.getBindingResult().getFieldErrors()){
-            //default mesaj gönderir
             validationErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
         error.setValidationErrors(validationErrors);
@@ -42,4 +45,10 @@ public class HoaxController {
         hoaxService.saveHoax(hoax);
         return new GenericResponse("Hoax Created Successfully!");
     }
+
+    @GetMapping("/hoaxes")
+    public Page<HoaxVM> getHoaxList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable page, @CurrentUser Users loggedInUser){
+        return hoaxService.getHoaxList(page, loggedInUser).map(HoaxVM::new);
+    }
+
 }
