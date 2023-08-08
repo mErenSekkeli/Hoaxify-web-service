@@ -1,5 +1,6 @@
 package com.hoaxify.webservice.hoax;
 
+import com.hoaxify.webservice.user.Users;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -9,7 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table
+@Table(indexes = {@Index(columnList = "id", name = "hoax_id_index")})
 @Getter
 @Setter
 public class Hoaxes {
@@ -22,6 +23,9 @@ public class Hoaxes {
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
     private LocalDateTime timestamp;
+
+    @ManyToOne
+    private Users user;
 
 
 }

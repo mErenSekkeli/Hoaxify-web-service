@@ -42,13 +42,18 @@ public class HoaxController {
     @PostMapping("/hoaxes/{username}")
     @PreAuthorize("#username == #loggedInUser.userName")
     public GenericResponse createHoax(@PathVariable String username, @Valid @RequestBody Hoaxes hoax, @CurrentUser Users loggedInUser) {
-        hoaxService.saveHoax(hoax);
+        hoaxService.saveHoax(hoax, loggedInUser);
         return new GenericResponse("Hoax Created Successfully!");
     }
 
     @GetMapping("/hoaxes")
-    public Page<HoaxVM> getHoaxList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable page, @CurrentUser Users loggedInUser){
-        return hoaxService.getHoaxList(page, loggedInUser).map(HoaxVM::new);
+    public Page<HoaxVM> getHoaxList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable page){
+        return hoaxService.getHoaxList(page).map(HoaxVM::new);
+    }
+
+    @GetMapping("/users/{username}/hoaxes")
+    public Page<HoaxVM> getHoaxesOfUser(@PathVariable String username, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable page){
+        return hoaxService.getHoaxesOfUser(username, page).map(HoaxVM::new);
     }
 
 }
