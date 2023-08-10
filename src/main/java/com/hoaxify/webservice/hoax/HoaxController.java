@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -51,9 +52,33 @@ public class HoaxController {
         return hoaxService.getHoaxList(page).map(HoaxVM::new);
     }
 
+    @GetMapping("/hoaxes/{id:[0-9]+}")
+    public ResponseEntity<?> getHoaxRelativeList(@PathVariable long id, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable page,
+                                              @RequestParam(name = "count", required = false, defaultValue = "false") boolean count){
+        if(count) {
+            long newHoaxCount = hoaxService.getNewHoaxesCount(id, null);
+            Map<String, Long> response = new HashMap<>();
+            response.put("count", newHoaxCount);
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.ok(hoaxService.getOldHoaxes(id, page).map(HoaxVM::new));
+    }
+
     @GetMapping("/users/{username}/hoaxes")
     public Page<HoaxVM> getHoaxesOfUser(@PathVariable String username, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable page){
         return hoaxService.getHoaxesOfUser(username, page).map(HoaxVM::new);
+    }
+
+    @GetMapping("/users/{username}/hoaxes/{id:[0-9]+}")
+    public ResponseEntity<?> getHoaxesOfUserRelatively(@PathVariable String username, @PathVariable long id, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable page,
+                                                  @RequestParam(name = "count", required = false, defaultValue = "false") boolean count){
+        if(count) {
+            long newHoaxCount = hoaxService.getNewHoaxesCount(id, username);
+            Map<String, Long> response = new HashMap<>();
+            response.put("count", newHoaxCount);
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.ok(hoaxService.getOldHoaxesOfUser(id, username, page).map(HoaxVM::new));
     }
 
 }

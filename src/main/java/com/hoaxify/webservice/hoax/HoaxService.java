@@ -26,8 +26,26 @@ public class HoaxService {
         return hoaxRepository.findAll(page);
     }
 
+    public Page<Hoaxes> getOldHoaxes(long id, Pageable page) {
+        return hoaxRepository.findByIdLessThan(id, page);
+    }
+
     public Page<Hoaxes> getHoaxesOfUser(String username, Pageable page){
         Users inDB = userService.getUserByUserName(username);
         return hoaxRepository.findByUser(inDB, page);
     }
+
+    public Page<Hoaxes> getOldHoaxesOfUser(long id, String username, Pageable page){
+        Users inDB = userService.getUserByUserName(username);
+        return hoaxRepository.findByIdLessThanAndUser(id, inDB, page);
+    }
+
+    public long getNewHoaxesCount(long id, String username) {
+        if(username != null){
+            Users inDB = userService.getUserByUserName(username);
+            return hoaxRepository.countByIdGreaterThanAndUser(id, inDB);
+        }
+        return hoaxRepository.countByIdGreaterThan(id);
+    }
+
 }
