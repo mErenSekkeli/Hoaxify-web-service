@@ -10,7 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(indexes = {@Index(columnList = "id", name = "hoax_id_index")})
+@Table(indexes = {@Index(columnList = "user_id", name = "hoax_id_index")})
 @Getter
 @Setter
 public class Hoaxes {
