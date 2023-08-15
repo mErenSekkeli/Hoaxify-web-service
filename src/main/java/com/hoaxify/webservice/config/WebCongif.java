@@ -17,6 +17,10 @@ public class WebCongif implements WebMvcConfigurer {
     @Value("${file-upload-dir}")
     String uploadDir;
 
+    @Value("${file-upload-hoax-attachements-dir}")
+    String hoaxFileUploadDir;
+
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/images/**").addResourceLocations("file:./" + uploadDir + "/")
@@ -28,8 +32,12 @@ public class WebCongif implements WebMvcConfigurer {
         return (args) -> {
             File folder = new File(uploadDir);
             boolean folderExist = folder.exists() && folder.isDirectory();
+            boolean hoaxFolderExist = new File(uploadDir + "/" + hoaxFileUploadDir).exists() && new File(uploadDir + "/" + hoaxFileUploadDir).isDirectory();
             if (!folderExist) {
                 folder.mkdir();
+            }
+            if (!hoaxFolderExist) {
+                new File(uploadDir + "/" + hoaxFileUploadDir).mkdir();
             }
         };
     }
