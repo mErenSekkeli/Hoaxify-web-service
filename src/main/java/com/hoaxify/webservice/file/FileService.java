@@ -1,5 +1,6 @@
 package com.hoaxify.webservice.file;
 
+import jakarta.transaction.Transactional;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,12 @@ public class FileService {
 
     @Value("${file-upload-hoax-attachements-dir}")
     String hoaxFileUploadDir;
+
+    FileAttachmentRepository fileAttachmentRepository;
+
+    public FileService(FileAttachmentRepository fileAttachmentRepository) {
+        this.fileAttachmentRepository = fileAttachmentRepository;
+    }
 
     public String writeBase64EncodedStringToFile(String image) throws IOException {
         String fileName = generateRandomName();
@@ -47,7 +54,7 @@ public class FileService {
         return tika.detect(Base64.getDecoder().decode(file));
     }
 
-    public String saveHoaxAttachment(MultipartFile file) {
+    public FileAttachment saveHoaxAttachment(MultipartFile file) {
         String fileName = generateRandomName();
         File target = new File(uploadDir + "/" + hoaxFileUploadDir + "/" + fileName);
         try {
@@ -55,9 +62,24 @@ public class FileService {
             outputStream.write(file.getBytes());
             outputStream.close();
         } catch (IOException e) {
-            //TODO Auto-generated catch block
             e.printStackTrace();
+            return null;
         }
-        return fileName;
+        FileAttachment fileAttachment = new FileAttachment();
+        fileAttachment.setName(fileName);
+        return fileAttachmentRepository.save(fileAttachment);
+    }
+
+    @Transactional
+    public boolean cancelFileAttachment(FileAttachment file) {
+        try {
+            Files.deleteIfExists(Paths.get(uploadDir + "/" + hoaxFileUploadDir + "/" + file.getName()));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        String id = String.valueOf(file.getId());
+        fileAttachmentRepository.deleteByHoaxIdIsNullAndId(Long.parseLong(id));
+        return true;
     }
 }

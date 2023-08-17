@@ -5,6 +5,7 @@ import com.hoaxify.webservice.shared.CurrentUser;
 import com.hoaxify.webservice.user.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -35,9 +36,17 @@ public class FileController {
 
     @PostMapping("/hoax-attachments/{username}")
     @PreAuthorize("#username == #loggedInUser.userName")
-    public Map<String, String> saveHoaxAttachment(MultipartFile file, @PathVariable String username, @CurrentUser Users loggedInUser){
+    public ResponseEntity<?> saveHoaxAttachment(MultipartFile file, @PathVariable String username, @CurrentUser Users loggedInUser){
+        FileAttachment fileAttachment = fileService.saveHoaxAttachment(file);
+        if(fileAttachment != null) {
+            return ResponseEntity.ok(fileAttachment);
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
 
-        String fileName = fileService.saveHoaxAttachment(file);
-        return Map.of("name", fileName);
+    @DeleteMapping("/hoax-attachments/{username}")
+    @PreAuthorize("#username == #loggedInUser.userName")
+    public ResponseEntity<?> deleteHoaxAttachment(@RequestBody FileAttachment file, @PathVariable String username, @CurrentUser Users loggedInUser){
+        return (fileService.cancelFileAttachment(file)) ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }
