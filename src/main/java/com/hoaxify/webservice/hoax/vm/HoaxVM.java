@@ -1,5 +1,7 @@
 package com.hoaxify.webservice.hoax.vm;
 
+import com.hoaxify.webservice.file.FileAttachment;
+import com.hoaxify.webservice.file.vm.FileAttachmentVM;
 import com.hoaxify.webservice.hoax.Hoaxes;
 import com.hoaxify.webservice.user.vm.UserVM;
 import lombok.Data;
@@ -12,11 +14,13 @@ public class HoaxVM {
     private String content;
     private LocalDateTime timestamp;
     private UserVM user;
+    private FileAttachmentVM fileAttachment;
 
     public HoaxVM(Hoaxes hoax) {
         this.id = hoax.getId();
         this.content = hoax.getContent();
         this.timestamp = hoax.getTimestamp();
         this.user = new UserVM(hoax.getUser());
+        this.fileAttachment = (hoax.getFileAttachment() != null) ? new FileAttachmentVM(hoax.getFileAttachment()) : null;
     }
 }

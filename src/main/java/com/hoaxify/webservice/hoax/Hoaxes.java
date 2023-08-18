@@ -1,5 +1,6 @@
 package com.hoaxify.webservice.hoax;
 
+import com.hoaxify.webservice.file.FileAttachment;
 import com.hoaxify.webservice.user.Users;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
@@ -26,6 +27,9 @@ public class Hoaxes {
 
     @ManyToOne
     private Users user;
+
+    @OneToOne(mappedBy = "hoax")
+    private FileAttachment fileAttachment;
 
 
 }

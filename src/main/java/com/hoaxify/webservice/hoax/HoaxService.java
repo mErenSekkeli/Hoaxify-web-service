@@ -1,5 +1,8 @@
 package com.hoaxify.webservice.hoax;
 
+import com.hoaxify.webservice.file.FileAttachment;
+import com.hoaxify.webservice.file.FileAttachmentRepository;
+import com.hoaxify.webservice.hoax.vm.HoaxSubmitVM;
 import com.hoaxify.webservice.user.UserService;
 import com.hoaxify.webservice.user.Users;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class HoaxService {
@@ -18,12 +22,23 @@ public class HoaxService {
     HoaxRepository hoaxRepository;
 
     @Autowired
+    FileAttachmentRepository fileAttachmentRepository;
+
+    @Autowired
     UserService userService;
 
 
-    public void saveHoax(Hoaxes hoax, Users user) {
+    public void saveHoax(HoaxSubmitVM hoaxSubmitVM, Users user) {
+        Hoaxes hoax = new Hoaxes();
+        hoax.setContent(hoaxSubmitVM.getContent());
         hoax.setUser(user);
         hoaxRepository.save(hoax);
+
+        Optional<FileAttachment> fileAttachment = fileAttachmentRepository.findById(hoaxSubmitVM.getAttachmentId());
+        if(fileAttachment.isPresent()){
+            fileAttachment.get().setHoax(hoax);
+            fileAttachmentRepository.save(fileAttachment.get());
+        }
     }
 
     public Page<Hoaxes> getHoaxList(Pageable page){
