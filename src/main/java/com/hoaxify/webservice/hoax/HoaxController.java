@@ -1,6 +1,7 @@
 package com.hoaxify.webservice.hoax;
 
 import com.hoaxify.webservice.error.ApiError;
+import com.hoaxify.webservice.hoax.vm.HoaxSubmitVM;
 import com.hoaxify.webservice.hoax.vm.HoaxVM;
 import com.hoaxify.webservice.shared.CurrentUser;
 import com.hoaxify.webservice.shared.GenericResponse;
@@ -43,7 +44,7 @@ public class HoaxController {
 
     @PostMapping("/hoaxes/{username}")
     @PreAuthorize("#username == #loggedInUser.userName")
-    public GenericResponse createHoax(@PathVariable String username, @Valid @RequestBody Hoaxes hoax, @CurrentUser Users loggedInUser) {
+    public GenericResponse createHoax(@PathVariable String username, @Valid @RequestBody HoaxSubmitVM hoax, @CurrentUser Users loggedInUser) {
         hoaxService.saveHoax(hoax, loggedInUser);
         return new GenericResponse("Hoax Created Successfully!");
     }

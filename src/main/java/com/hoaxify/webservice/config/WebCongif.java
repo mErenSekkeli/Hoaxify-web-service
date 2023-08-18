@@ -24,6 +24,7 @@ public class WebCongif implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/images/**").addResourceLocations("file:./" + uploadDir + "/")
+                .addResourceLocations("file:./" + uploadDir + "/" + hoaxFileUploadDir + "/")
                 .setCacheControl(CacheControl.maxAge(30, TimeUnit.DAYS));
     }
 
