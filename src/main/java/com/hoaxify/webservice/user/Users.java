@@ -14,6 +14,7 @@ import java.util.Collection;
 
 @Entity
 @Table(indexes = {@Index(columnList = "id", name = "user_id_index")})
+@Getter
 public class Users implements UserDetails {
     @Id
     @GeneratedValue
@@ -34,16 +35,9 @@ public class Users implements UserDetails {
     private String pass;
     private String image;
 
-    public String getName() {
-        return name;
-    }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getSurname() {
-        return surname;
     }
 
     public void setSurname(String surname) {
@@ -56,10 +50,6 @@ public class Users implements UserDetails {
 
     public String getUserName() {
         return userName;
-    }
-
-    public String getImage() {
-        return image;
     }
 
     public void setImage(String image) {
