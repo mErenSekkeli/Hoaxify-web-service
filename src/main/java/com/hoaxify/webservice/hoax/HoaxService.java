@@ -1,7 +1,10 @@
 package com.hoaxify.webservice.hoax;
 
+import com.hoaxify.webservice.error.AuthorizationException;
+import com.hoaxify.webservice.error.NotFoundException;
 import com.hoaxify.webservice.file.FileAttachment;
 import com.hoaxify.webservice.file.FileAttachmentRepository;
+import com.hoaxify.webservice.file.FileService;
 import com.hoaxify.webservice.hoax.vm.HoaxSubmitVM;
 import com.hoaxify.webservice.user.UserService;
 import com.hoaxify.webservice.user.Users;
@@ -26,6 +29,9 @@ public class HoaxService {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    FileService fileService;
 
 
     public void saveHoax(HoaxSubmitVM hoaxSubmitVM, Users user) {
@@ -89,4 +95,15 @@ public class HoaxService {
         return (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.greaterThan(root.get("id"), id);
     }
 
+    public void delete(long id) {
+        Hoaxes hoax = hoaxRepository.findById(id).orElseThrow(NotFoundException::new);
+        if(hoax.getFileAttachment() != null) {
+            try {
+                fileService.deleteFile(hoax.getFileAttachment().getName(), 1);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        hoaxRepository.deleteById(id);
+    }
 }

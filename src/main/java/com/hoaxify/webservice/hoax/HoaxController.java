@@ -80,4 +80,11 @@ public class HoaxController {
         return hoaxService.getHoaxesOfUser(username, page).map(HoaxVM::new);
     }
 
+    @DeleteMapping("/hoaxes/{id:[0-9]+}")
+    @PreAuthorize("@hoaxSecurity.isAllowedToDelete(#id, #loggedInUser)")
+    public GenericResponse deleteHoax(@PathVariable long id, @CurrentUser Users loggedInUser){
+        hoaxService.delete(id);
+        return new GenericResponse("Hoax Deleted Successfully!");
+    }
+
 }
