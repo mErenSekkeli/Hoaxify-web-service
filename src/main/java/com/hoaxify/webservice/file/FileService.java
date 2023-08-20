@@ -1,5 +1,6 @@
 package com.hoaxify.webservice.file;
 
+import com.hoaxify.webservice.user.Users;
 import jakarta.transaction.Transactional;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
@@ -114,5 +115,21 @@ public class FileService {
             }
             fileAttachmentRepository.deleteById(file.getId());
         }
+    }
+
+
+    public void deleteAllStoredFilesForUser(Users inDB) {
+        List<FileAttachment> files = fileAttachmentRepository.findByHoaxUser(inDB);
+        try {
+            deleteFile(inDB.getImage(), 0);
+
+            for(FileAttachment file : files){
+                deleteFile(file.getName(), 1);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
