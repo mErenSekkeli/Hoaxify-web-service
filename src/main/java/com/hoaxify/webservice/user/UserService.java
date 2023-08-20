@@ -2,8 +2,10 @@ package com.hoaxify.webservice.user;
 
 import com.hoaxify.webservice.error.NotFoundException;
 import com.hoaxify.webservice.file.FileService;
+import com.hoaxify.webservice.hoax.HoaxService;
 import com.hoaxify.webservice.user.vm.UserUpdateVM;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,6 +20,7 @@ public class UserService {
     UserRepository userRepository;
     FileService fileService;
     PasswordEncoder passwordEncoder;
+
     @Autowired//Eğer tek bir tane set edilecek obje varsa autowired'a gerek yok
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, FileService fileService) {
         this.userRepository = userRepository;
@@ -75,4 +78,10 @@ public class UserService {
         return userRepository.save(inDB);
     }
 
+    public void deleteUser(String username) {
+        //hoaxService.deleteAllHoaxesOfUser(username); // This part is not necessary because of the cascade type
+        Users inDB = getUserByUserName(username);
+        fileService.deleteAllStoredFilesForUser(inDB);
+        userRepository.delete(inDB);
+    }
 }

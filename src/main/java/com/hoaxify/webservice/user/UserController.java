@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/1.0")
+@RequestMapping("${hoaxify.api.path}")
 public class UserController {
     @Autowired//otomatik olarak instance set ediyor
     UserService userService;
@@ -76,5 +76,12 @@ public class UserController {
     public UserVM updateUser(@PathVariable String username, @Valid @RequestBody UserUpdateVM updatedUser, @CurrentUser Users loggedInUser){
         Users user = userService.updateUser(username, updatedUser);
         return new UserVM(user);
+    }
+
+    @DeleteMapping("/users/{username}")
+    @PreAuthorize("#username == #loggedInUser.userName")
+    public ResponseEntity<?> deleteUser(@PathVariable String username, @CurrentUser Users loggedInUser){
+        userService.deleteUser(username);
+        return ResponseEntity.ok(new GenericResponse("User Has Deleted Successfully!"));
     }
 }

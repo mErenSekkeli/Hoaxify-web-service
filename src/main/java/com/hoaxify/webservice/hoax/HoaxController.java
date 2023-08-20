@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/1.0")
+@RequestMapping("${hoaxify.api.path}")
 public class HoaxController {
 
     @Autowired

@@ -1,5 +1,6 @@
 package com.hoaxify.webservice.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hoaxify.webservice.hoax.Hoaxes;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -10,6 +11,7 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.List;
 
 
 @Entity
@@ -34,6 +36,8 @@ public class Users implements UserDetails {
              message = "{hoaxify.constraint.pass.pattern.message}")
     private String pass;
     private String image;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Hoaxes> hoaxes;
 
 
     public void setName(String name) {

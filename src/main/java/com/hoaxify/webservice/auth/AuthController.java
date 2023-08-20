@@ -10,9 +10,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class AuthController {
 
-    @Autowired
-    UserService userService;
-
     @PostMapping("/api/1.0/auth")
     public UserVM handleAuth(@CurrentUser Users user) {
         return new UserVM(user);

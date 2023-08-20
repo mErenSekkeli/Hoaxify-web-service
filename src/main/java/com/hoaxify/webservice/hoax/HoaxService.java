@@ -9,6 +9,7 @@ import com.hoaxify.webservice.hoax.vm.HoaxSubmitVM;
 import com.hoaxify.webservice.user.UserService;
 import com.hoaxify.webservice.user.Users;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,18 +22,20 @@ import java.util.Optional;
 @Service
 public class HoaxService {
 
-    @Autowired
-    HoaxRepository hoaxRepository;
+    final HoaxRepository hoaxRepository;
 
-    @Autowired
-    FileAttachmentRepository fileAttachmentRepository;
+    final FileAttachmentRepository fileAttachmentRepository;
 
-    @Autowired
     UserService userService;
 
-    @Autowired
     FileService fileService;
 
+    public HoaxService(FileService fileService, HoaxRepository hoaxRepository, FileAttachmentRepository fileAttachmentRepository, UserService userService) {
+        this.fileService = fileService;
+        this.hoaxRepository = hoaxRepository;
+        this.fileAttachmentRepository = fileAttachmentRepository;
+        this.userService = userService;
+    }
 
     public void saveHoax(HoaxSubmitVM hoaxSubmitVM, Users user) {
         Hoaxes hoax = new Hoaxes();
@@ -106,4 +109,5 @@ public class HoaxService {
         }
         hoaxRepository.deleteById(id);
     }
+
 }
