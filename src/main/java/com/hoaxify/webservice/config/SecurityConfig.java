@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/1.0/users/{username}").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/1.0/hoaxes").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/1.0/hoax-attachments/{username}").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/1.0/logout").authenticated()
                 .and()
                 .authorizeHttpRequests().anyRequest().permitAll();
 

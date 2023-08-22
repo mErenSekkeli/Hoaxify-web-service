@@ -33,3 +33,4 @@ build/
 .vscode/
 
 storage-dev/
+src/main/resources/static
