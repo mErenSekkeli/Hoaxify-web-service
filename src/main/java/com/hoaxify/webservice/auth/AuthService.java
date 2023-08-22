@@ -1,77 +1,84 @@
 package com.hoaxify.webservice.auth;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.hoaxify.webservice.error.AuthorizationException;
-import com.hoaxify.webservice.error.NotFoundException;
 import com.hoaxify.webservice.user.UserService;
 import com.hoaxify.webservice.user.Users;
 import com.hoaxify.webservice.user.vm.UserVM;
 import jakarta.transaction.Transactional;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.Base64;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 @Service
+@EnableScheduling
 public class AuthService {
 
     UserService userService;
     PasswordEncoder passwordEncoder;
+    TokenRepository tokenRepository;
 
-    private final String SECRET_KEY = "secret-key";
+    private final long ONE_MONTH = (long) 30 * 24 * 60 * 60 * 1000;
 
-    private final int ONE_DAY = 24 * 60 * 60 * 1000;
-
-    public AuthService(UserService userService, PasswordEncoder passwordEncoder) {
+    public AuthService(UserService userService, PasswordEncoder passwordEncoder, TokenRepository tokenRepository) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
+        this.tokenRepository = tokenRepository;
     }
-
     public AuthResponse authenticate(Credentials credentials) {
         Users inDb = userService.getUserByUserName(credentials.getUserName());
         if(inDb == null) {
-            throw new AuthorizationException();
+            throw new AuthorizationException("Not Authorized");
         }
         boolean isMatched = passwordEncoder.matches(credentials.getPass(), inDb.getPass());
         if(!isMatched) {
-            throw new AuthorizationException();
+            throw new AuthorizationException("Not Authorized");
         }
         UserVM userVM = new UserVM(inDb);
-        String token;
-        try {
-            Algorithm algorithm = Algorithm.HMAC512(SECRET_KEY);
-            token = JWT.create()
-                    .withIssuer("hoaxify")
-                    .withSubject("" + inDb.getId())
-                    .withExpiresAt(new java.util.Date(System.currentTimeMillis() + ONE_DAY))
-                    .sign(algorithm);
 
-        } catch (JWTCreationException exception){
-            throw new AuthorizationException();
-        }
+        String token = generateRandomToken();
+        Token tokenEntity = new Token();
+        tokenEntity.setToken(token);
+        tokenEntity.setUser(inDb);
+        tokenRepository.save(tokenEntity);
+
         AuthResponse authResponse = new AuthResponse();
         authResponse.setToken(token);
         authResponse.setUser(userVM);
         return authResponse;
     }
 
+    public String generateRandomToken() {
+        String random = UUID.randomUUID().toString().replaceAll("-", "");
+        SecureRandom secureRandom = new SecureRandom();
+        byte[] key = new byte[128];
+        secureRandom.nextBytes(key);
+        return random + Base64.getUrlEncoder().withoutPadding().encodeToString(key).replaceAll("-", "");
+    }
+
     @Transactional
     public UserDetails getUserDetails(String token) {
-        DecodedJWT decodedJWT;
-        try {
-            Algorithm algorithm = Algorithm.HMAC512(SECRET_KEY);
-            JWTVerifier verifier = JWT.require(algorithm)
-                    .withIssuer("hoaxify")
-                    .build();
-            decodedJWT = verifier.verify(token);
-        } catch (Exception e) {
-            throw new AuthorizationException();
-        }
-        String userId = decodedJWT.getSubject();
+        Optional<Token> inDbToken = tokenRepository.findById(token);
+        return inDbToken.<UserDetails>map(Token::getUser).orElse(null);
+    }
 
-        return userService.getUserById(Long.parseLong(userId));
+    @Scheduled(fixedRate = ONE_MONTH)
+    public void cleanExpiredTokens() {
+        LocalDateTime oneMonthAgo = LocalDateTime.now().minusMonths(1);
+        List<Token> expiredTokens = tokenRepository.findByDateBefore(oneMonthAgo);
+        tokenRepository.deleteAll(expiredTokens);
+    }
+
+    public void clearToken(String token) {
+        Optional<Token> inDbToken = tokenRepository.findById(token);
+        inDbToken.ifPresent(value -> tokenRepository.delete(value));
     }
 }

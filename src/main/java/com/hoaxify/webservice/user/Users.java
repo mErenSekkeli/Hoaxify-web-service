@@ -1,5 +1,6 @@
 package com.hoaxify.webservice.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hoaxify.webservice.auth.Token;
 import com.hoaxify.webservice.hoax.Hoaxes;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -22,22 +23,25 @@ public class Users implements UserDetails {
     @GeneratedValue
     private long id;
     @NotNull(message = "{hoaxify.constraint.name.NotNull.message}")
-    @Size(min = 5, max = 250)
+    @Size(min = 4, max = 250)
     private String name;
     @NotNull(message = "{hoaxify.constraint.surname.NotNull.message}")
-    @Size(min = 5, max = 250)
+    @Size(min = 4, max = 250)
     private String surname;
     @NotNull(message = "{hoaxify.constraint.userName.NotNull.message}")
-    @Size(min = 5, max = 250)
+    @Size(min = 4, max = 250)
     @UniqueUsername(message = "{hoaxify.constraint.userName.uniqueUserName.message}")
     private String userName;
     @NotNull(message = "{hoaxify.constraint.pass.NotNull.message}")
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$",
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=*])(?=\\S+$).{8,}$",
              message = "{hoaxify.constraint.pass.pattern.message}")
     private String pass;
     private String image;
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Hoaxes> hoaxes;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Token> tokens;
 
 
     public void setName(String name) {
