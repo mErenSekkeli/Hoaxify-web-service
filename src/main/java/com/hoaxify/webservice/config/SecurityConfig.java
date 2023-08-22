@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
 
@@ -36,15 +37,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable();
 
-        http.httpBasic().authenticationEntryPoint(new AuthenticationEntryPoint() {
-            @Override
-            public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-                response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
-            }
-        });
+        http.exceptionHandling().authenticationEntryPoint((request, response, authException) -> response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase()));
 
         http.authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST, "/api/1.0/auth").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/1.0/users/{username}").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/1.0/hoaxes").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/1.0/hoax-attachments/{username}").authenticated()
@@ -53,12 +48,19 @@ public class SecurityConfig {
 
         //otomatik session tutulmasını önlüyor
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.addFilterBefore(tokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public TokenFilter tokenFilter() {
+        return new TokenFilter();
     }
 
     @Bean

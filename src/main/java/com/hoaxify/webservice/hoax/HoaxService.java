@@ -1,6 +1,5 @@
 package com.hoaxify.webservice.hoax;
 
-import com.hoaxify.webservice.error.AuthorizationException;
 import com.hoaxify.webservice.error.NotFoundException;
 import com.hoaxify.webservice.file.FileAttachment;
 import com.hoaxify.webservice.file.FileAttachmentRepository;
@@ -8,8 +7,6 @@ import com.hoaxify.webservice.file.FileService;
 import com.hoaxify.webservice.hoax.vm.HoaxSubmitVM;
 import com.hoaxify.webservice.user.UserService;
 import com.hoaxify.webservice.user.Users;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
