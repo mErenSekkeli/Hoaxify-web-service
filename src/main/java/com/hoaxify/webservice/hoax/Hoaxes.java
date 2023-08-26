@@ -1,6 +1,7 @@
 package com.hoaxify.webservice.hoax;
 
 import com.hoaxify.webservice.file.FileAttachment;
+import com.hoaxify.webservice.like.Likes;
 import com.hoaxify.webservice.user.Users;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
@@ -9,6 +10,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(indexes = {@Index(columnList = "user_id", name = "hoax_id_index")})
@@ -30,6 +32,9 @@ public class Hoaxes {
 
     @OneToOne(mappedBy = "hoax", cascade = CascadeType.REMOVE)
     private FileAttachment fileAttachment;
+
+    @OneToMany(mappedBy = "hoax", cascade = CascadeType.REMOVE)
+    private List<Likes> likes;
 
 
 }

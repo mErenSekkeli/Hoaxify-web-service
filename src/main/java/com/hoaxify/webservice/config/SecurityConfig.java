@@ -44,6 +44,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/1.0/hoaxes").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/1.0/hoax-attachments/{username}").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/1.0/logout").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/1.0/hoaxes/likes/{id:[0-9]+}").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/1.0/hoaxes/likes/{id:[0-9]+}").authenticated()
                 .and()
                 .authorizeHttpRequests().anyRequest().permitAll();
 
