@@ -7,7 +7,6 @@ import com.hoaxify.webservice.like.vm.LikeSubmitVM;
 import com.hoaxify.webservice.like.vm.LikeVM;
 import com.hoaxify.webservice.user.UserRepository;
 import com.hoaxify.webservice.user.Users;
-import com.hoaxify.webservice.user.vm.UserVM;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
