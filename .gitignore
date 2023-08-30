@@ -34,3 +34,4 @@ build/
 
 storage-dev/
 src/main/resources/static
+/need_to_run.sql

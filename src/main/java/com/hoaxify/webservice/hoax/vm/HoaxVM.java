@@ -15,6 +15,7 @@ public class HoaxVM {
     private LocalDateTime timestamp;
     private UserVM user;
     private FileAttachmentVM fileAttachment;
+    private long likeCount;
 
     public HoaxVM(Hoaxes hoax) {
         this.id = hoax.getId();
@@ -22,5 +23,6 @@ public class HoaxVM {
         this.timestamp = hoax.getTimestamp();
         this.user = new UserVM(hoax.getUser());
         this.fileAttachment = (hoax.getFileAttachment() != null) ? new FileAttachmentVM(hoax.getFileAttachment()) : null;
+        this.likeCount = hoax.getLikeCount();
     }
 }

@@ -36,5 +36,8 @@ public class Hoaxes {
     @OneToMany(mappedBy = "hoax", cascade = CascadeType.REMOVE)
     private List<Likes> likes;
 
+    @Column(columnDefinition = "integer default 0")
+    private long likeCount;
+
 
 }
