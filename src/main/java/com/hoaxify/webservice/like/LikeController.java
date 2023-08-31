@@ -3,9 +3,12 @@ package com.hoaxify.webservice.like;
 import com.hoaxify.webservice.error.ApiError;
 import com.hoaxify.webservice.like.vm.LikeSubmitVM;
 import com.hoaxify.webservice.like.vm.LikeVM;
+import com.hoaxify.webservice.shared.CurrentUser;
 import com.hoaxify.webservice.shared.GenericResponse;
+import com.hoaxify.webservice.user.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -33,15 +36,21 @@ public class LikeController {
     }
 
     @PostMapping("/hoaxes/likes/{id:[0-9]+}")
-    public GenericResponse likeHoax(@PathVariable long id, @RequestBody LikeSubmitVM like){
+    public ResponseEntity<?> likeHoax(@PathVariable long id, @RequestBody LikeSubmitVM like, @CurrentUser Users loggedInUser){
+        if(!like.getUsername().equals(loggedInUser.getUserName())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new GenericResponse("Unauthorized"));
+        }
         likeService.like(like);
-        return new GenericResponse("Hoax liked");
+        return ResponseEntity.ok(new GenericResponse("Hoax liked"));
     }
 
     @DeleteMapping("/hoaxes/likes/{id:[0-9]+}/{username}")
-    public GenericResponse unlikeHoax(@PathVariable long id, @PathVariable String username){
+    public ResponseEntity<?> unlikeHoax(@PathVariable long id, @PathVariable String username, @CurrentUser Users loggedInUser){
+        if(!username.equals(loggedInUser.getUserName())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new GenericResponse("Unauthorized"));
+        }
         likeService.unlike(id, username);
-        return new GenericResponse("Like removed");
+        return ResponseEntity.ok(new GenericResponse("Hoax unliked"));
     }
 
     @GetMapping("/users/{username}/likes")

@@ -1,5 +1,6 @@
 package com.hoaxify.webservice.like;
 
+import com.hoaxify.webservice.error.AuthorizationException;
 import com.hoaxify.webservice.error.NotFoundException;
 import com.hoaxify.webservice.hoax.HoaxRepository;
 import com.hoaxify.webservice.hoax.Hoaxes;
@@ -32,6 +33,10 @@ public class LikeService {
         if(optionalHoax.isEmpty()){
             throw new NotFoundException();
         }
+        Likes inDBLike = likeRepository.findByUserAndHoax(inDbUser, optionalHoax.get());
+        if(inDBLike != null){
+            throw new AuthorizationException("You have already liked this hoax");
+        }
         Hoaxes hoax = optionalHoax.get();
         Likes likes = new Likes();
         likes.setHoax(hoax);
@@ -47,6 +52,9 @@ public class LikeService {
         }
         Hoaxes hoax = optionalHoax.get();
         Likes likes = likeRepository.findByUserAndHoax(inDbUser, hoax);
+        if(likes == null){
+            throw new AuthorizationException("You have not liked this hoax");
+        }
         likeRepository.delete(likes);
     }
 
