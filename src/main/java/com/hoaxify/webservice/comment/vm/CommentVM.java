@@ -1,7 +1,6 @@
 package com.hoaxify.webservice.comment.vm;
 
 import com.hoaxify.webservice.comment.Comments;
-import com.hoaxify.webservice.user.Users;
 import com.hoaxify.webservice.user.vm.UserVM;
 import lombok.Data;
 

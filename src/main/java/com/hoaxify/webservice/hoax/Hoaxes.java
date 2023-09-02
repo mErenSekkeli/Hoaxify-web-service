@@ -1,5 +1,6 @@
 package com.hoaxify.webservice.hoax;
 
+import com.hoaxify.webservice.comment.Comments;
 import com.hoaxify.webservice.file.FileAttachment;
 import com.hoaxify.webservice.like.Likes;
 import com.hoaxify.webservice.user.Users;
@@ -36,8 +37,14 @@ public class Hoaxes {
     @OneToMany(mappedBy = "hoax", cascade = CascadeType.REMOVE)
     private List<Likes> likes;
 
+    @OneToMany(mappedBy = "hoax", cascade = CascadeType.REMOVE)
+    private List<Comments> comments;
+
     @Column(columnDefinition = "integer default 0")
     private long likeCount;
+
+    @Column(columnDefinition = "integer default 0")
+    private long commentCount;
 
 
 }

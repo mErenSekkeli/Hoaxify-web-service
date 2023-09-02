@@ -2,7 +2,6 @@ package com.hoaxify.webservice.comment;
 
 import com.hoaxify.webservice.comment.vm.CommentSubmitVM;
 import com.hoaxify.webservice.comment.vm.CommentVM;
-import com.hoaxify.webservice.error.AuthorizationException;
 import com.hoaxify.webservice.error.NotFoundException;
 import com.hoaxify.webservice.hoax.HoaxRepository;
 import com.hoaxify.webservice.hoax.Hoaxes;
