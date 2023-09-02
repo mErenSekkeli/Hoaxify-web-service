@@ -1,6 +1,7 @@
 package com.hoaxify.webservice.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hoaxify.webservice.auth.Token;
+import com.hoaxify.webservice.comment.Comments;
 import com.hoaxify.webservice.hoax.Hoaxes;
 import com.hoaxify.webservice.like.Likes;
 import jakarta.persistence.*;
@@ -46,6 +47,9 @@ public class Users implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Likes> likes;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Comments> comments;
 
 
     public void setName(String name) {

@@ -1,6 +1,5 @@
 package com.hoaxify.webservice.hoax.vm;
 
-import com.hoaxify.webservice.file.FileAttachment;
 import com.hoaxify.webservice.file.vm.FileAttachmentVM;
 import com.hoaxify.webservice.hoax.Hoaxes;
 import com.hoaxify.webservice.user.vm.UserVM;
@@ -16,6 +15,7 @@ public class HoaxVM {
     private UserVM user;
     private FileAttachmentVM fileAttachment;
     private long likeCount;
+    private long commentCount;
 
     public HoaxVM(Hoaxes hoax) {
         this.id = hoax.getId();
@@ -24,5 +24,6 @@ public class HoaxVM {
         this.user = new UserVM(hoax.getUser());
         this.fileAttachment = (hoax.getFileAttachment() != null) ? new FileAttachmentVM(hoax.getFileAttachment()) : null;
         this.likeCount = hoax.getLikeCount();
+        this.commentCount = hoax.getCommentCount();
     }
 }
